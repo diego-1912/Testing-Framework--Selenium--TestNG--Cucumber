@@ -13,13 +13,14 @@ import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import utils.DriverFactory;
+import utils.LogDirectoryInitializer;
 
 public abstract class BaseClass {
 
     protected static WebDriver driver;
     protected static WebDriverWait wait;
     protected static String baseUrl;
-    protected static final Logger logger = LoggerFactory.getLogger(BaseClass.class);
+    protected static Logger logger;
 
     public BaseClass() {
     }
@@ -27,7 +28,10 @@ public abstract class BaseClass {
     @Parameters({"browser", "baseUrl"})
     @BeforeClass
     public void setUpClass(String browser, String baseUrl) {
-        Logger logger = LoggerFactory.getLogger(BaseClass.class);
+        LogDirectoryInitializer.initializeLogDirectories();
+        initializeLogger(browser);
+        System.setProperty("log4j2.debug", "true");
+        System.out.println("Current working directory: " + System.getProperty("user.dir"));
         logger.info("Setting up WebDriver for browser: {}", browser);
         driver = DriverFactory.getDriver(browser);
         BaseClass.baseUrl = baseUrl;
@@ -40,6 +44,23 @@ public abstract class BaseClass {
         logger.info("Navigated to base URL: {}", BaseClass.baseUrl);
 
         waitForPageToLoad();
+    }
+
+    private void initializeLogger(String browser) {
+        switch (browser.toLowerCase()) {
+            case "chrome":
+                logger = LoggerFactory.getLogger("ChromeLogger");
+                break;
+            case "firefox":
+                logger = LoggerFactory.getLogger("FirefoxLogger");
+                break;
+            case "edge":
+                logger = LoggerFactory.getLogger("EdgeLogger");
+                break;
+            default:
+                logger = LoggerFactory.getLogger(BaseClass.class);
+                break;
+        }
     }
 
     private void waitForPageToLoad() {

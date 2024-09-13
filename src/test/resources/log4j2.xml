@@ -1,71 +1,73 @@
-<configuration>
-    <!-- Define properties for dynamic file names -->
-    <timestamp key="bySecond" datePattern="yyyyMMdd'T'HHmmss"/>
-    <property name="LOG_DIR" value="./logs" />
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <!-- Define reusable properties -->
+    <Properties>
+        <Property name="LOG_DIR">logs</Property>
+        <Property name="ARCHIVE_DIR">${LOG_DIR}/archive</Property>
+        <Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</Property>
+    </Properties>
 
-    <!-- Console Appender -->
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
-        </encoder>
-    </appender>
+    <!-- Define log appenders -->
+    <Appenders>
+        <!-- Console appender -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+        </Console>
 
-    <!-- File Appender for Chrome -->
-    <appender name="FILE-CHROME" class="ch.qos.logback.core.FileAppender">
-        <file>${LOG_DIR}/chrome_${bySecond}.log</file>
-        <append>false</append>
-        <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
-        </encoder>
-    </appender>
+        <!-- RollingFile appender for Chrome logs -->
+        <RollingFile name="ChromeFileAppender" fileName="${LOG_DIR}/chrome/chrome_test.log"
+                     filePattern="${ARCHIVE_DIR}/chrome/chrome_test_%d{yyyy-MM-dd-HH-mm-ss}.log">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <OnStartupTriggeringPolicy />
+            </Policies>
+            <DefaultRolloverStrategy max="5"/>
+        </RollingFile>
 
-    <!-- File Appender for Edge -->
-    <appender name="FILE-EDGE" class="ch.qos.logback.core.FileAppender">
-        <file>${LOG_DIR}/edge_${bySecond}.log</file>
-        <append>false</append>
-        <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
-        </encoder>
-    </appender>
+        <!-- RollingFile appender for Firefox logs -->
+        <RollingFile name="FirefoxFileAppender" fileName="${LOG_DIR}/firefox/firefox_test.log"
+                     filePattern="${ARCHIVE_DIR}/firefox/firefox_test_%d{yyyy-MM-dd-HH-mm-ss}.log">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <OnStartupTriggeringPolicy />
+            </Policies>
+            <DefaultRolloverStrategy max="5"/>
+        </RollingFile>
 
-    <!-- File Appender for Firefox -->
-    <appender name="FILE-FIREFOX" class="ch.qos.logback.core.FileAppender">
-        <file>${LOG_DIR}/firefox_${bySecond}.log</file>
-        <append>false</append>
-        <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
-        </encoder>
-    </appender>
+        <!-- RollingFile appender for Edge logs -->
+        <RollingFile name="EdgeFileAppender" fileName="${LOG_DIR}/edge/edge_test.log"
+                     filePattern="${ARCHIVE_DIR}/edge/edge_test_%d{yyyy-MM-dd-HH-mm-ss}.log">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <OnStartupTriggeringPolicy />
+            </Policies>
+            <DefaultRolloverStrategy max="5"/>
+        </RollingFile>
+    </Appenders>
 
-    <!-- Conditional processing based on the 'browser' system property -->
-    <if condition='property("browser").equals("chrome")'>
-        <then>
-            <root level="INFO">
-                <appender-ref ref="CONSOLE" />
-                <appender-ref ref="FILE-CHROME" />
-            </root>
-        </then>
-    </if>
-    <if condition='property("browser").equals("edge")'>
-        <then>
-            <root level="INFO">
-                <appender-ref ref="CONSOLE" />
-                <appender-ref ref="FILE-EDGE" />
-            </root>
-        </then>
-    </if>
-    <if condition='property("browser").equals("firefox")'>
-        <then>
-            <root level="INFO">
-                <appender-ref ref="CONSOLE" />
-                <appender-ref ref="FILE-FIREFOX" />
-            </root>
-        </then>
-    </if>
+    <!-- Define loggers -->
+    <Loggers>
+        <!-- Root logger to handle general application logs -->
+        <Root level="all">
+            <AppenderRef ref="Console"/>
+        </Root>
 
-    <!-- Default root logger configuration -->
-    <root level="INFO">
-        <appender-ref ref="CONSOLE" />
-    </root>
+        <!-- Logger for Chrome tests -->
+        <Logger name="ChromeLogger" level="all" additivity="false">
+            <AppenderRef ref="ChromeFileAppender"/>
+            <AppenderRef ref="Console"/>
+        </Logger>
 
-</configuration>
+        <!-- Logger for Firefox tests -->
+        <Logger name="FirefoxLogger" level="all" additivity="false">
+            <AppenderRef ref="FirefoxFileAppender"/>
+            <AppenderRef ref="Console"/>
+        </Logger>
+
+        <!-- Logger for Edge tests -->
+        <Logger name="EdgeLogger" level="all" additivity="false">
+            <AppenderRef ref="EdgeFileAppender"/>
+            <AppenderRef ref="Console"/>
+        </Logger>
+    </Loggers>
+</Configuration>
