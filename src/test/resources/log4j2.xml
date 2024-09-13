@@ -1,0 +1,71 @@
+<configuration>
+    <!-- Define properties for dynamic file names -->
+    <timestamp key="bySecond" datePattern="yyyyMMdd'T'HHmmss"/>
+    <property name="LOG_DIR" value="./logs" />
+
+    <!-- Console Appender -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- File Appender for Chrome -->
+    <appender name="FILE-CHROME" class="ch.qos.logback.core.FileAppender">
+        <file>${LOG_DIR}/chrome_${bySecond}.log</file>
+        <append>false</append>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- File Appender for Edge -->
+    <appender name="FILE-EDGE" class="ch.qos.logback.core.FileAppender">
+        <file>${LOG_DIR}/edge_${bySecond}.log</file>
+        <append>false</append>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- File Appender for Firefox -->
+    <appender name="FILE-FIREFOX" class="ch.qos.logback.core.FileAppender">
+        <file>${LOG_DIR}/firefox_${bySecond}.log</file>
+        <append>false</append>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Conditional processing based on the 'browser' system property -->
+    <if condition='property("browser").equals("chrome")'>
+        <then>
+            <root level="INFO">
+                <appender-ref ref="CONSOLE" />
+                <appender-ref ref="FILE-CHROME" />
+            </root>
+        </then>
+    </if>
+    <if condition='property("browser").equals("edge")'>
+        <then>
+            <root level="INFO">
+                <appender-ref ref="CONSOLE" />
+                <appender-ref ref="FILE-EDGE" />
+            </root>
+        </then>
+    </if>
+    <if condition='property("browser").equals("firefox")'>
+        <then>
+            <root level="INFO">
+                <appender-ref ref="CONSOLE" />
+                <appender-ref ref="FILE-FIREFOX" />
+            </root>
+        </then>
+    </if>
+
+    <!-- Default root logger configuration -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+    </root>
+
+</configuration>
