@@ -1,73 +1,92 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN">
-    <!-- Define reusable properties -->
+
+    <!-- Define reusable properties for logging configuration -->
     <Properties>
+        <!-- Directory where log files will be stored -->
         <Property name="LOG_DIR">logs</Property>
+        <!-- Directory where archived log files will be stored -->
         <Property name="ARCHIVE_DIR">${LOG_DIR}/archive</Property>
-        <Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</Property>
+        <!-- Pattern for log messages, including timestamp, thread, log level, logger name, and message -->
+        <Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} [%X{browser}] - %msg%n</Property>
     </Properties>
 
-    <!-- Define log appenders -->
+    <!-- Define appenders for logging output -->
     <Appenders>
-        <!-- Console appender -->
+        <!-- Console appender to display logs on the console (standard output) -->
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="${LOG_PATTERN}"/>
         </Console>
 
-        <!-- RollingFile appender for Chrome logs -->
-        <RollingFile name="ChromeFileAppender" fileName="${LOG_DIR}/chrome/chrome_test.log"
-                     filePattern="${ARCHIVE_DIR}/chrome/chrome_test_%d{yyyy-MM-dd-HH-mm-ss}.log">
-            <PatternLayout pattern="${LOG_PATTERN}"/>
-            <Policies>
-                <OnStartupTriggeringPolicy />
-            </Policies>
-            <DefaultRolloverStrategy max="5"/>
-        </RollingFile>
+        <!-- Routing appender to direct log output to different files based on the browser context -->
+        <Routing name="RoutingAppender">
+            <Routes pattern="${ctx:browser}">
+                <!-- Route for Chrome browser logs -->
+                <Route key="chrome">
+                    <RollingFile name="ChromeFileAppender" fileName="${LOG_DIR}/chrome/chrome_test.log"
+                                 filePattern="${ARCHIVE_DIR}/chrome/chrome_test_%d{yyyy-MM-dd-HH-mm-ss}.log.gz">
+                        <!-- Define the layout of the log messages -->
+                        <PatternLayout pattern="${LOG_PATTERN}"/>
+                        <!-- Define policies for log file rotation -->
+                        <Policies>
+                            <!-- Time-based policy: rotate log files every day -->
+                            <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                            <!-- Size-based policy: rotate log files when they reach 10 MB -->
+                            <SizeBasedTriggeringPolicy size="10 MB"/>
+                        </Policies>
+                        <!-- Strategy to manage the number of retained log files -->
+                        <DefaultRolloverStrategy max="5"/>
+                    </RollingFile>
+                </Route>
 
-        <!-- RollingFile appender for Firefox logs -->
-        <RollingFile name="FirefoxFileAppender" fileName="${LOG_DIR}/firefox/firefox_test.log"
-                     filePattern="${ARCHIVE_DIR}/firefox/firefox_test_%d{yyyy-MM-dd-HH-mm-ss}.log">
-            <PatternLayout pattern="${LOG_PATTERN}"/>
-            <Policies>
-                <OnStartupTriggeringPolicy />
-            </Policies>
-            <DefaultRolloverStrategy max="5"/>
-        </RollingFile>
+                <!-- Route for Firefox browser logs -->
+                <Route key="firefox">
+                    <RollingFile name="FirefoxFileAppender" fileName="${LOG_DIR}/firefox/firefox_test.log"
+                                 filePattern="${ARCHIVE_DIR}/firefox/firefox_test_%d{yyyy-MM-dd-HH-mm-ss}.log.gz">
+                        <PatternLayout pattern="${LOG_PATTERN}"/>
+                        <Policies>
+                            <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                            <SizeBasedTriggeringPolicy size="10 MB"/>
+                        </Policies>
+                        <DefaultRolloverStrategy max="5"/>
+                    </RollingFile>
+                </Route>
 
-        <!-- RollingFile appender for Edge logs -->
-        <RollingFile name="EdgeFileAppender" fileName="${LOG_DIR}/edge/edge_test.log"
-                     filePattern="${ARCHIVE_DIR}/edge/edge_test_%d{yyyy-MM-dd-HH-mm-ss}.log">
-            <PatternLayout pattern="${LOG_PATTERN}"/>
-            <Policies>
-                <OnStartupTriggeringPolicy />
-            </Policies>
-            <DefaultRolloverStrategy max="5"/>
-        </RollingFile>
+                <!-- Route for Edge browser logs -->
+                <Route key="edge">
+                    <RollingFile name="EdgeFileAppender" fileName="${LOG_DIR}/edge/edge_test.log"
+                                 filePattern="${ARCHIVE_DIR}/edge/edge_test_%d{yyyy-MM-dd-HH-mm-ss}.log.gz">
+                        <PatternLayout pattern="${LOG_PATTERN}"/>
+                        <Policies>
+                            <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                            <SizeBasedTriggeringPolicy size="10 MB"/>
+                        </Policies>
+                        <DefaultRolloverStrategy max="5"/>
+                    </RollingFile>
+                </Route>
+
+                <!-- Default route when no specific browser context is matched -->
+                <Route>
+                    <RollingFile name="DefaultFileAppender" fileName="${LOG_DIR}/default/default_test.log"
+                                 filePattern="${ARCHIVE_DIR}/default/default_test_%d{yyyy-MM-dd-HH-mm-ss}.log.gz">
+                        <PatternLayout pattern="${LOG_PATTERN}"/>
+                        <Policies>
+                            <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                            <SizeBasedTriggeringPolicy size="10 MB"/>
+                        </Policies>
+                        <DefaultRolloverStrategy max="5"/>
+                    </RollingFile>
+                </Route>
+            </Routes>
+        </Routing>
     </Appenders>
 
-    <!-- Define loggers -->
+    <!-- Define loggers and their level -->
     <Loggers>
-        <!-- Root logger to handle general application logs -->
+        <!-- Root logger configuration: logs all levels and directs output to console and routing appender -->
         <Root level="all">
             <AppenderRef ref="Console"/>
+            <AppenderRef ref="RoutingAppender"/>
         </Root>
-
-        <!-- Logger for Chrome tests -->
-        <Logger name="ChromeLogger" level="all" additivity="false">
-            <AppenderRef ref="ChromeFileAppender"/>
-            <AppenderRef ref="Console"/>
-        </Logger>
-
-        <!-- Logger for Firefox tests -->
-        <Logger name="FirefoxLogger" level="all" additivity="false">
-            <AppenderRef ref="FirefoxFileAppender"/>
-            <AppenderRef ref="Console"/>
-        </Logger>
-
-        <!-- Logger for Edge tests -->
-        <Logger name="EdgeLogger" level="all" additivity="false">
-            <AppenderRef ref="EdgeFileAppender"/>
-            <AppenderRef ref="Console"/>
-        </Logger>
     </Loggers>
 </Configuration>

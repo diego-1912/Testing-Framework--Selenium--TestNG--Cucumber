@@ -2,15 +2,12 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven 3.8.4'
+        maven 'Maven 3.8.1'
         jdk 'JDK 17'
     }
 
-    environment {
-        FIREFOX_BINARY = '/usr/bin/firefox'
-        CHROME_BINARY = '/usr/bin/google-chrome-stable'
-        GECKODRIVER_PATH = '/usr/local/bin/geckodriver'
-        CHROMEDRIVER_PATH = '/usr/local/bin/chromedriver'
+    parameters {
+        choice(name: 'BROWSER', choices: ['chrome', 'firefox', 'edge'], description: 'Select the browser to run tests')
     }
 
     stages {
@@ -26,43 +23,55 @@ pipeline {
             }
         }
 
-        stage('Run Tests - Firefox') {
+        stage('Test') {
             steps {
-                sh 'mvn test -Dbrowser=firefox -DbaseUrl=https://www.saucedemo.com/'
+                script {
+                    def browsers = ['chrome', 'firefox', 'edge']
+                    browsers.each { browser ->
+                        stage("Run Tests on ${browser.capitalize()}") {
+                            try {
+                                sh "mvn test -Dbrowser=${browser} -Dcucumber.filter.tags=\"@${browser}\""
+                            } catch (Exception e) {
+                                currentBuild.result = 'FAILURE'
+                                error "Tests failed on ${browser}"
+                            }
+                        }
+                    }
+                }
             }
         }
 
-        stage('Run Tests - Chrome') {
+        stage('Generate Reports') {
             steps {
-                sh 'mvn test -Dbrowser=chrome -DbaseUrl=https://www.saucedemo.com/'
-            }
-        }
+                script {
+                    cucumber buildStatus: 'UNSTABLE',
+                        fileIncludePattern: '**/cucumber.json',
+                        jsonReportDirectory: 'target'
 
-        stage('Publish Test Results') {
-            steps {
-                // Use either 'testng' (if you have the plugin) or 'junit' for standard test result publishing
-                junit '**/target/surefire-reports/testng-results.xml'
-            }
-        }
-
-        stage('Publish Extent Report') {
-            steps {
-                publishHTML(target: [
-                    allowMissing: false,
-                    alwaysLinkToLastBuild: false,
-                    keepAll: true,
-                    reportDir: 'test-output',
-                    reportFiles: 'ExtentReport.html',
-                    reportName: 'Extent Report'
-                ])
+                    publishHTML([
+                        allowMissing: false,
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true,
+                        reportDir: 'target/cucumber-reports',
+                        reportFiles: 'extent-report.html',
+                        reportName: 'Extent HTML Report',
+                        reportTitles: ''
+                    ])
+                }
             }
         }
     }
 
     post {
         always {
-            archiveArtifacts artifacts: 'logs/**/*.log', allowEmptyArchive: true
-            cleanWs()
+            echo 'Cleaning up workspace'
+            deleteDir()
+        }
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed. Check the logs for details.'
         }
     }
 }

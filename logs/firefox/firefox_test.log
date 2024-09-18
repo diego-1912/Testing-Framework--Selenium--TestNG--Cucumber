@@ -1,0 +1,15 @@
+2024-09-17 22:16:48.033 [TestNG-PoolService-4] DEBUG my.project.Test.stepDefinitions.LoginStepDefinitions [firefox] - WebDriver instance obtained from DriverFactory
+2024-09-17 22:16:48.042 [TestNG-PoolService-4] INFO  my.project.Test.pages.LoginPage [firefox] - LoginPage initialized
+2024-09-17 22:16:48.043 [TestNG-PoolService-4] DEBUG my.project.Test.stepDefinitions.LoginStepDefinitions [firefox] - LoginPage object created
+2024-09-17 22:16:48.044 [TestNG-PoolService-4] DEBUG my.project.Test.stepDefinitions.LoginStepDefinitions [firefox] - SoftAssert object initialized
+2024-09-17 22:16:48.044 [TestNG-PoolService-4] INFO  my.project.Test.stepDefinitions.LoginStepDefinitions [firefox] - Navigating to the login page at URL: https://www.saucedemo.com
+2024-09-17 22:16:48.383 [TestNG-PoolService-4] DEBUG my.project.Test.stepDefinitions.LoginStepDefinitions [firefox] - Opened URL: https://www.saucedemo.com
+2024-09-17 22:16:48.415 [TestNG-PoolService-4] INFO  my.project.Test.stepDefinitions.LoginStepDefinitions [firefox] - Login page is displayed correctly
+2024-09-17 22:16:48.416 [TestNG-PoolService-4] INFO  my.project.Test.stepDefinitions.LoginStepDefinitions [firefox] - Entering username: 'standard_user'
+2024-09-17 22:16:48.530 [TestNG-PoolService-4] DEBUG my.project.Test.stepDefinitions.LoginStepDefinitions [firefox] - Username 'standard_user' entered
+2024-09-17 22:16:48.530 [TestNG-PoolService-4] INFO  my.project.Test.stepDefinitions.LoginStepDefinitions [firefox] - Entering password
+2024-09-17 22:16:48.582 [TestNG-PoolService-4] DEBUG my.project.Test.stepDefinitions.LoginStepDefinitions [firefox] - Password entered
+2024-09-17 22:16:48.583 [TestNG-PoolService-4] INFO  my.project.Test.stepDefinitions.LoginStepDefinitions [firefox] - Clicking the login button
+2024-09-17 22:16:48.865 [TestNG-PoolService-4] DEBUG my.project.Test.stepDefinitions.LoginStepDefinitions [firefox] - Login button clicked
+2024-09-17 22:16:48.866 [TestNG-PoolService-4] INFO  my.project.Test.stepDefinitions.LoginStepDefinitions [firefox] - Verifying user is redirected to the dashboard page
+2024-09-17 22:16:48.866 [TestNG-PoolService-4] INFO  my.project.Test.stepDefinitions.LoginStepDefinitions [firefox] - Dashboard page redirection verification completed

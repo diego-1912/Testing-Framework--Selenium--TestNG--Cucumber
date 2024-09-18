@@ -1,0 +1,10 @@
+2024-09-17 21:19:34.011 [TestNG-PoolService-10] DEBUG my.project.Test.stepDefinitions.LoginStepDefinitions [chrome] - Opened URL: https://www.saucedemo.com
+2024-09-17 21:19:34.159 [TestNG-PoolService-10] INFO  my.project.Test.stepDefinitions.LoginStepDefinitions [chrome] - Login page is displayed correctly
+2024-09-17 21:19:34.161 [TestNG-PoolService-10] INFO  my.project.Test.stepDefinitions.LoginStepDefinitions [chrome] - Entering username: 'standard_user'
+2024-09-17 21:19:34.352 [TestNG-PoolService-10] DEBUG my.project.Test.stepDefinitions.LoginStepDefinitions [chrome] - Username 'standard_user' entered
+2024-09-17 21:19:34.352 [TestNG-PoolService-10] INFO  my.project.Test.stepDefinitions.LoginStepDefinitions [chrome] - Entering password
+2024-09-17 21:19:34.513 [TestNG-PoolService-10] DEBUG my.project.Test.stepDefinitions.LoginStepDefinitions [chrome] - Password entered
+2024-09-17 21:19:34.514 [TestNG-PoolService-10] INFO  my.project.Test.stepDefinitions.LoginStepDefinitions [chrome] - Clicking the login button
+2024-09-17 21:19:34.637 [TestNG-PoolService-10] DEBUG my.project.Test.stepDefinitions.LoginStepDefinitions [chrome] - Login button clicked
+2024-09-17 21:19:34.638 [TestNG-PoolService-10] INFO  my.project.Test.stepDefinitions.LoginStepDefinitions [chrome] - Verifying user is redirected to the dashboard page
+2024-09-17 21:19:34.639 [TestNG-PoolService-10] INFO  my.project.Test.stepDefinitions.LoginStepDefinitions [chrome] - Dashboard page redirection verification completed
